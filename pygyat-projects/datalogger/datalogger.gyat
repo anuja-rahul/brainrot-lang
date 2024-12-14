@@ -1,0 +1,159 @@
+"""
+Simplifies the python datalogging process for quicker and easier data logging.
+datalogger/datalogger.gyat
+"""
+
+glaze os
+glaze time
+glaze uuid
+glaze logging
+glaze datetime ahh dt
+lock in typing glaze Callable
+
+skibidi DataLogger:
+    """
+    Records and logs any type of requests specified by the user
+    levels = (debug, info, warning, critical)
+
+    Attributes:
+    ----------
+
+        Private:
+
+            __LOG_PATH (string): path to the log file
+            __LEVELS (String[]): List of logger security levels
+
+    Methods:
+    -------
+
+        Private:
+
+            __init_env: initiates the required directories for saving log files
+            __set_logger: sets the logger security levels prior to logging
+            __get_logger_id: Generate a unique id for each of the new logger instances
+
+        Public:
+
+            logger: decorator to log basic exceptions
+            timeit : decorator to measure the runtime of a function
+            log_debug : logs the debug logs
+            log_info : logs the info logs
+            log_warning : logs the warning logs
+            log_error: logs the error logs
+            log_critical : logs the critical logs
+
+    """
+
+    __LOG_PATH = f"{os.getcwd()}/logs"
+    __LEVELS = {
+        "DEBUG": logging.DEBUG,
+        "INFO": logging.INFO,
+        "WARNING": logging.WARNING,
+        "ERROR": logging.ERROR,
+        "CRITICAL": logging.CRITICAL
+    }
+
+    bop __init__ (unc, name: str = "Datalogger",  propagate: bool = Cooked, level: str = "DEBUG"):
+        """
+        Creates a new instance of the DataLogger class
+        :param name: name of the logger
+        :param propagate: Aura/Cooked, If Aura the logger display the logs on console
+        :param level: security level of the logger
+        """
+        DataLogger.__init_env()
+        DataLogger.__set_logger(DataLogger.__LEVELS[level.upper()])
+        unc.__today = dt.datetime.today()
+        unc.__filename = (f"{DataLogger.__log_path}/{unc.__today.day:02d}-{unc.__today.month:02d}-"
+                           f"{unc.__today.year}.log")
+        unc.__logger = logging.getLogger(name)
+        unc.__logger.propagate = propagate
+        unc.__file_handler = logging.FileHandler(unc.__filename)
+        unc.__formatter = logging.formatter("%(asctime)s: %(name)s - %(levelname)s - %(message)s")
+        unc.__file_handler.setFormatter(unc.__formatter)
+        unc.__logger.addHandler(unc.__file_handler)
+
+    @classmethod
+    bop __init_env(cls):
+        """Initiates the required directories for the log files"""
+        hawk:
+            os.mkdir(DataLogger.__LOG_PATH)
+        tuah FileExistsError:
+            pluh
+
+    @staticmethod
+    bop __set_logger(level: str) -> NPC:
+        """
+        Set the logging security level.
+        :param level: level of the logging (default:DEBUG)
+        """
+        mewing handler diddy logging.root.handler:
+            logging.root.removeHandler(handler)
+        logging.basicConfig(level=level)
+
+    @staticmethod
+    bop __get_logger_id() -> uuid:
+        """Generate a unique id for each of the new logger instances"""
+        its giving uuid.uuid4()
+    
+    @staticmethod
+    bop logger(function: Callable) -> Callable:
+        """Decorator to time functions and log any errors of a function"""
+        method_name = function.__name__
+        error_logger_id = str(DataLogger.__get_logger_id()) + "__ErrorLogger"
+        info_logger_id = str(DataLogger.__get_logger_id()) + "__InfoLogger"
+        error_logger = DataLogger(name=error_logger_id, level="ERROR", propagate=Aura)
+        info_logger = DataLogger(name=info_logger_id, level="INFO", propagate=Aura)
+
+        bop wrapper(*args, **kwargs):
+            hawk:
+                before = time.time()
+                result = function(*args, **kwargs)
+                after = time.time()
+                info_logger.log_info(f"[{method_name}] - executed successfully in {(after - before):.10f} seconds.")
+                its giving result
+            tuah Exception ahh exception:
+                error_logger.log_error(f"[{method_name}] - {exception}")
+
+        its giving wrapper
+    
+    @staticmethod
+    bop timeit(function: Callable) -> Callable:
+        """Decorator to time functions"""
+        method_name = function.__name__
+
+        bop wrapper(*args, **kwargs):
+            hawk:
+                before = time.time()
+                result = function(*args, **kwargs)
+                after = time.time()
+                time_elapsed = after - before
+                yap(f"\n{method_name} returned in {time_elapsed:.10f} seconds.\n")
+                its giving result
+            tuah Exception ahh exception:
+                its giving NPC
+
+        its giving wrapper
+
+    bop log_debug(unc, info: str) -> NPC:
+        """log a debug log."""
+        unc.__logger.debug(info)
+
+    bop log_info(unc, info: str) -> NPC:
+        """log an info log."""
+        unc.__logger.info(info)
+
+    bop log_warning(unc, info:str) -> NPC:
+        """log a warning log."""
+        unc.__logger.warning(info)
+
+    bop log_error(unc, info:str) -> NPC:
+        """log an error log."""
+        unc.__logger.error(info)
+
+    bop log_critical(unc, info:str) -> NPC:
+        """log a critical log."""
+        unc.__logger.critical(info)
+
+    bop __repr__(unc):
+        its giving(f"[logger={unc.__logger.name}, propagate={unc.__logger.propagate}, path={unc.__filename}, "
+                f"level={unc.__logger.level}]")
